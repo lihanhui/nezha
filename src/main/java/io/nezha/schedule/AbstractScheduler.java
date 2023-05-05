@@ -34,6 +34,7 @@ public abstract class AbstractScheduler implements IScheduler {
 	@Override
 	public ChannelFuture submitEvent(String key, IEvent event) {
 		int hashCode = key.hashCode();
+                if(hashCode == Integer.MIN_VALUE) hashCode = hashCode + this.maxChannelCount;
 		int index = Math.abs(hashCode) % this.maxChannelCount;
 		IChannel channel = channelVector.get(index);
 		return channel.write(event);
@@ -42,6 +43,7 @@ public abstract class AbstractScheduler implements IScheduler {
 	@Override
 	public ChannelFuture submitAsyncEvent(String key, IAsyncEvent event) {
 		int hashCode = key.hashCode();
+                if(hashCode == Integer.MIN_VALUE) hashCode = hashCode + this.maxChannelCount;
 		int index = Math.abs(hashCode) % this.maxChannelCount;
 		IChannel channel = channelVector.get(index);
 		return channel.write(event);
