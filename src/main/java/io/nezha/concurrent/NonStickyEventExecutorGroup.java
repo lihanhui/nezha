@@ -15,20 +15,20 @@
  */
 package io.nezha.concurrent;
 
-import io.nezha.internal.ObjectUtil;
-import io.nezha.internal.PlatformDependent;
-import io.nezha.internal.UnstableApi;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import io.nezha.internal.ObjectUtil;
+import io.nezha.internal.UnstableApi;
 
 /**
  * {@link EventExecutorGroup} which will preserve {@link Runnable} execution order but makes no guarantees about what
@@ -214,7 +214,7 @@ public final class NonStickyEventExecutorGroup implements EventExecutorGroup {
     private static final class NonStickyOrderedEventExecutor extends AbstractEventExecutor
             implements Runnable, OrderedEventExecutor {
         private final EventExecutor executor;
-        private final Queue<Runnable> tasks = PlatformDependent.newMpscQueue();
+        private final Queue<Runnable> tasks = new ConcurrentLinkedQueue<>();
 
         private static final int NONE = 0;
         private static final int SUBMITTED = 1;
@@ -323,7 +323,7 @@ public final class NonStickyEventExecutorGroup implements EventExecutorGroup {
                 } catch (Throwable e) {
                     // Not reset the state as some other Runnable may be added to the queue already in the meantime.
                     tasks.remove(command);
-                    PlatformDependent.throwException(e);
+                    throw new RuntimeException(e);
                 }
             }
         }

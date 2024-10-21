@@ -55,7 +55,7 @@ public final class ThrowableUtil {
     }
 
     public static boolean haveSuppressed() {
-        return PlatformDependent.javaVersion() >= 7;
+        return true;
     }
 
     @SuppressJava6Requirement(reason = "Throwable addSuppressed is only available for >= 7. Has check for < 7.")

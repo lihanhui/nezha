@@ -98,7 +98,7 @@ public final class StringUtil {
         try {
             buf.append(byteToHexStringPadded(value));
         } catch (IOException e) {
-            PlatformDependent.throwException(e);
+            throw new RuntimeException(e);
         }
         return buf;
     }
@@ -149,7 +149,7 @@ public final class StringUtil {
         try {
             buf.append(byteToHexString(value));
         } catch (IOException e) {
-            PlatformDependent.throwException(e);
+            throw new RuntimeException(e);
         }
         return buf;
     }

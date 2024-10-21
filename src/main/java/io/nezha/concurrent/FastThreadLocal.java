@@ -17,7 +17,6 @@ package io.nezha.concurrent;
 
 import io.nezha.internal.InternalThreadLocalMap;
 import io.nezha.internal.ObjectCleaner;
-import io.nezha.internal.PlatformDependent;
 
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -190,7 +189,7 @@ public class FastThreadLocal<V> {
         try {
             v = initialValue();
         } catch (Exception e) {
-            PlatformDependent.throwException(e);
+        	throw new RuntimeException(e);
         }
 
         threadLocalMap.setIndexedVariable(index, v);
@@ -273,7 +272,7 @@ public class FastThreadLocal<V> {
             try {
                 onRemoval((V) v);
             } catch (Exception e) {
-                PlatformDependent.throwException(e);
+            	throw new RuntimeException(e);
             }
         }
     }

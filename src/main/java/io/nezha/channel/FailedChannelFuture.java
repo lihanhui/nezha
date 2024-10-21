@@ -16,7 +16,6 @@
 package io.nezha.channel;
 
 import io.nezha.concurrent.EventExecutor;
-import io.nezha.internal.PlatformDependent;
 
 /**
  * The {@link CompleteChannelFuture} which is failed already.  It is
@@ -53,13 +52,13 @@ final class FailedChannelFuture extends CompleteChannelFuture {
 
     @Override
     public ChannelFuture sync() {
-        PlatformDependent.throwException(cause);
+        //throw cause;
         return this;
     }
 
     @Override
     public ChannelFuture syncUninterruptibly() {
-        PlatformDependent.throwException(cause);
+        //PlatformDependent.throwException(cause);
         return this;
     }
 }

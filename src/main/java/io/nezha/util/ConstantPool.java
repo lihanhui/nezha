@@ -16,11 +16,11 @@
 
 package io.nezha.util;
 
-import io.nezha.internal.ObjectUtil;
-import io.nezha.internal.PlatformDependent;
-
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import io.nezha.internal.ObjectUtil;
 
 /**
  * A pool of {@link Constant}s.
@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class ConstantPool<T extends Constant<T>> {
 
-    private final ConcurrentMap<String, T> constants = PlatformDependent.newConcurrentHashMap();
+    private final ConcurrentMap<String, T> constants = new ConcurrentHashMap<>();
 
     private final AtomicInteger nextId = new AtomicInteger(1);
 

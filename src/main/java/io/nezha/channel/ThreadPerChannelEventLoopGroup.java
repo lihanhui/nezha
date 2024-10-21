@@ -16,6 +16,18 @@
 package io.nezha.channel;
 
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+
 import io.nezha.concurrent.AbstractEventExecutorGroup;
 import io.nezha.concurrent.DefaultPromise;
 import io.nezha.concurrent.EventExecutor;
@@ -25,20 +37,8 @@ import io.nezha.concurrent.GlobalEventExecutor;
 import io.nezha.concurrent.Promise;
 import io.nezha.concurrent.ThreadPerTaskExecutor;
 import io.nezha.internal.EmptyArrays;
-import io.nezha.internal.PlatformDependent;
 import io.nezha.internal.ReadOnlyIterator;
 import io.nezha.internal.ThrowableUtil;
-
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 
 /**
  * An {@link EventLoopGroup} that creates one {@link EventLoop} per {@link IChannel}.
@@ -49,7 +49,7 @@ public class ThreadPerChannelEventLoopGroup extends AbstractEventExecutorGroup i
     private final int maxChannels;
     final Executor executor;
     final Set<EventLoop> activeChildren =
-            Collections.newSetFromMap(PlatformDependent.<EventLoop, Boolean>newConcurrentHashMap());
+            Collections.newSetFromMap(new ConcurrentHashMap<EventLoop, Boolean>());
     final Queue<EventLoop> idleChildren = new ConcurrentLinkedQueue<EventLoop>();
     private final ChannelException tooManyChannels;
 

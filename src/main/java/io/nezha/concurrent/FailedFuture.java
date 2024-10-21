@@ -15,8 +15,6 @@
  */
 package io.nezha.concurrent;
 
-import io.nezha.internal.PlatformDependent;
-
 /**
  * The {@link CompleteFuture} which is failed already.  It is
  * recommended to use {@link EventExecutor#newFailedFuture(Throwable)}
@@ -52,13 +50,13 @@ public final class FailedFuture<V> extends CompleteFuture<V> {
 
     @Override
     public Future<V> sync() {
-        PlatformDependent.throwException(cause);
+        //PlatformDependent.throwException(cause);
         return this;
     }
 
     @Override
     public Future<V> syncUninterruptibly() {
-        PlatformDependent.throwException(cause);
+        //PlatformDependent.throwException(cause);
         return this;
     }
 

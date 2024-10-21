@@ -15,11 +15,11 @@
  */
 package io.nezha.channel;
 
-import io.nezha.internal.PlatformDependent;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 import io.nezha.internal.logging.InternalLogger;
 import io.nezha.internal.logging.InternalLoggerFactory;
-
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * A special {@link ChannelInboundHandler} which offers an easy way to initialize a {@link IChannel} once it was
@@ -51,7 +51,7 @@ public abstract class ChannelInitializer<C extends IChannel> extends ChannelInbo
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(ChannelInitializer.class);
     // We use a ConcurrentMap as a ChannelInitializer is usually shared between all Channels in a Bootstrap /
     // ServerBootstrap. This way we can reduce the memory usage compared to use Attributes.
-    private final ConcurrentMap<ChannelHandlerContext, Boolean> initMap = PlatformDependent.newConcurrentHashMap();
+    private final ConcurrentMap<ChannelHandlerContext, Boolean> initMap = new ConcurrentHashMap<>();
 
     /**
      * This method will be called once the {@link IChannel} was registered. After the method returns this instance

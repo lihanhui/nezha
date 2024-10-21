@@ -16,15 +16,12 @@
 
 package io.nezha.channel;
 
-import io.nezha.internal.EmptyArrays;
-import io.nezha.internal.PlatformDependent;
-import io.nezha.internal.SystemPropertyUtil;
-import io.nezha.internal.logging.InternalLogger;
-import io.nezha.internal.logging.InternalLoggerFactory;
-
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
+
+import io.nezha.internal.logging.InternalLogger;
+import io.nezha.internal.logging.InternalLoggerFactory;
 
 /**
  * The default {@link ChannelId} implementation.
@@ -53,54 +50,6 @@ public final class DefaultChannelId implements ChannelId {
     static {
         
     }
-
-    private static int defaultProcessId() {
-        ClassLoader loader = null;
-        String value;
-        try {
-            loader = PlatformDependent.getClassLoader(DefaultChannelId.class);
-            // Invoke java.lang.management.ManagementFactory.getRuntimeMXBean().getName()
-            Class<?> mgmtFactoryType = Class.forName("java.lang.management.ManagementFactory", true, loader);
-            Class<?> runtimeMxBeanType = Class.forName("java.lang.management.RuntimeMXBean", true, loader);
-
-            Method getRuntimeMXBean = mgmtFactoryType.getMethod("getRuntimeMXBean", EmptyArrays.EMPTY_CLASSES);
-            Object bean = getRuntimeMXBean.invoke(null, EmptyArrays.EMPTY_OBJECTS);
-            Method getName = runtimeMxBeanType.getMethod("getName", EmptyArrays.EMPTY_CLASSES);
-            value = (String) getName.invoke(bean, EmptyArrays.EMPTY_OBJECTS);
-        } catch (Throwable t) {
-            logger.debug("Could not invoke ManagementFactory.getRuntimeMXBean().getName(); Android?", t);
-            try {
-                // Invoke android.os.Process.myPid()
-                Class<?> processType = Class.forName("android.os.Process", true, loader);
-                Method myPid = processType.getMethod("myPid", EmptyArrays.EMPTY_CLASSES);
-                value = myPid.invoke(null, EmptyArrays.EMPTY_OBJECTS).toString();
-            } catch (Throwable t2) {
-                logger.debug("Could not invoke Process.myPid(); not Android?", t2);
-                value = "";
-            }
-        }
-
-        int atIndex = value.indexOf('@');
-        if (atIndex >= 0) {
-            value = value.substring(0, atIndex);
-        }
-
-        int pid;
-        try {
-            pid = Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            // value did not contain an integer.
-            pid = -1;
-        }
-
-        if (pid < 0) {
-            pid = PlatformDependent.threadLocalRandom().nextInt();
-            logger.warn("Failed to find the current process ID from '{}'; using a random value: {}",  value, pid);
-        }
-
-        return pid;
-    }
-
     private final byte[] data;
     private final int hashCode;
 
@@ -125,7 +74,7 @@ public final class DefaultChannelId implements ChannelId {
         i = writeLong(i, Long.reverse(System.nanoTime()) ^ System.currentTimeMillis());
 
         // random
-        int random = PlatformDependent.threadLocalRandom().nextInt();
+        int random = new Random(i).nextInt();
         i = writeInt(i, random);
         assert i == data.length;
 

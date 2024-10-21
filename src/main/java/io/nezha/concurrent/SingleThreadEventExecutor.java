@@ -15,13 +15,6 @@
  */
 package io.nezha.concurrent;
 
-import io.nezha.internal.ObjectUtil;
-import io.nezha.internal.PlatformDependent;
-import io.nezha.internal.SystemPropertyUtil;
-import io.nezha.internal.UnstableApi;
-import io.nezha.internal.logging.InternalLogger;
-import io.nezha.internal.logging.InternalLoggerFactory;
-
 import java.lang.Thread.State;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +34,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+
+import io.nezha.internal.ObjectUtil;
+import io.nezha.internal.SystemPropertyUtil;
+import io.nezha.internal.UnstableApi;
+import io.nezha.internal.logging.InternalLogger;
+import io.nezha.internal.logging.InternalLoggerFactory;
 
 /**
  * Abstract base class for {@link OrderedEventExecutor}'s that execute all its submitted tasks in a single thread.
@@ -591,7 +590,7 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
 
                 if (!(cause instanceof Exception)) {
                     // Also rethrow as it may be an OOME for example
-                    PlatformDependent.throwException(cause);
+                    throw new RuntimeException(cause);
                 }
                 return terminationFuture;
             }
@@ -654,7 +653,7 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
 
                 if (!(cause instanceof Exception)) {
                     // Also rethrow as it may be an OOME for example
-                    PlatformDependent.throwException(cause);
+                    throw new RuntimeException(cause);
                 }
                 return;
             }
@@ -864,7 +863,7 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
                     doStartThread();
                 } catch (Throwable cause) {
                     STATE_UPDATER.set(this, ST_NOT_STARTED);
-                    PlatformDependent.throwException(cause);
+                    throw new RuntimeException(cause);
                 }
             }
         }
